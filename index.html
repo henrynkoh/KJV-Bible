@@ -1,0 +1,134 @@
+
+  <!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>영어 단어장</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    #wordCard {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #word {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="wordCard">
+    <div id="word"></div>
+  </div>
+  <button onclick="showDetails()">상세 정보 보기</button>
+  <button onclick="nextWord()">다음 단어</button>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <p><strong>발음:</strong> <span id="pronunciation"></span></p>
+      <p><strong>뜻:</strong> <span id="meaning"></span></p>
+      <p><strong>주제:</strong> <span id="topic"></span></p>
+      <p><strong>예시 문장:</strong> <span id="example"></span></p>
+    </div>
+  </div>
+
+  <script>
+    var words = [];
+    var currentIndex = 0;
+
+    function loadWords() {
+      google.script.run.withSuccessHandler(function(result) {
+        words = result;
+        showWord();
+      }).getWords();
+    }
+
+    function showWord() {
+      document.getElementById('word').textContent = words[currentIndex].word;
+    }
+
+    function showDetails() {
+      var modal = document.getElementById('modal');
+      document.getElementById('pronunciation').textContent = words[currentIndex].pronunciation;
+      document.getElementById('meaning').textContent = words[currentIndex].meaning;
+      document.getElementById('topic').textContent = words[currentIndex].topic;
+      document.getElementById('example').textContent = words[currentIndex].example;
+      modal.style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = "none";
+    }
+
+    function nextWord() {
+      currentIndex = (currentIndex + 1) % words.length;
+      showWord();
+    }
+
+    window.onclick = function(event) {
+      var modal = document.getElementById('modal');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    loadWords();
+  </script>
+</body>
+</html>
